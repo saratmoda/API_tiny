@@ -1,9 +1,15 @@
 require('dotenv').config();
 const axios = require('axios');
 
-const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_KEY = process.env.SUPABASE_KEY;
-const TINY_TOKEN = process.env.TINY_TOKEN;
+// 🔍 Carregando variáveis de ambiente com segurança
+const SUPABASE_URL = process.env.SUPABASE_URL || '';
+const SUPABASE_KEY = process.env.SUPABASE_KEY || '';
+const TINY_TOKEN = process.env.TINY_TOKEN || '';
+
+console.log("✅ SUPABASE_URL carregada:", SUPABASE_URL);
+console.log("✅ SUPABASE_KEY carregada:", SUPABASE_KEY ? '✔️ OK' : '❌ VAZIA');
+console.log("✅ TINY_TOKEN carregada:", TINY_TOKEN ? '✔️ OK' : '❌ VAZIA');
+
 const LIMITE = 500;
 const INTERVALO = 1500;
 const MAX_POR_MINUTO = 40;
@@ -66,7 +72,7 @@ async function processarLote() {
 
   if (!pedidos || pedidos.length === 0) {
     console.log('🏁 Nenhum pedido restante. Aguardando próxima tentativa...');
-    return false; // para saber que pode encerrar se quiser
+    return false;
   }
 
   console.log(`📦 ${pedidos.length} pedidos encontrados.`);
@@ -137,9 +143,6 @@ async function loop() {
     const tevePedidos = await processarLote();
     console.log(`🕑 Aguardando ${PAUSA_ENTRE_LOTES / 60000} minutos antes do próximo lote...`);
     await new Promise(r => setTimeout(r, PAUSA_ENTRE_LOTES));
-
-    // Se não teve nenhum pedido no lote anterior, poderia até encerrar:
-    // if (!tevePedidos) break;
   }
 }
 
